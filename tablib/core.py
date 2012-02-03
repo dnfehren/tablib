@@ -103,8 +103,16 @@ class Row(object):
             return (tag in self.tags)
         else:
             return bool(len(set(tag) & set(self.tags)))
+    
+    def strict_tag(self, mtags):
+        """Returns true if current row contains all specified tags."""
 
-
+        if mtags == None:
+            return False
+        elif isinstance(mtags, str):
+            return (mtags in self.tags)
+        else:
+            return bool(len(set(mtags)) == len(set(mtags) & set(self.tags)))
 
 
 class Dataset(object):
@@ -778,6 +786,15 @@ class Dataset(object):
         """
         _dset = copy(self)
         _dset._data = [row for row in _dset._data if row.has_tag(tag)]
+
+        return _dset
+    
+    def strict_filter(self, tag):
+        """Returns a new instance of the :class:`Dataset`, excluding any rows
+        that do not contain the given :ref:`tags <tags>`.
+        """
+        _dset = copy(self)
+        _dset._data = [row for row in _dset._data if row.strict_tag(tag)]
 
         return _dset
 
